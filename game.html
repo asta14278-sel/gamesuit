@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Game Suit</title>
+  <style>
+    .gunting {
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      border-radius: 50%;
+      background: #ff4d4d;
+      padding: 8px;
+    }
+
+    .batu {
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      border-radius: 50%;
+      background: #4da6ff;
+      padding: 8px;
+    }
+
+    .kertas {
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      border-radius: 50%;
+      background: #ffcc00;
+      padding: 8px;
+    }
+
+    #result {
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      background-color: rgba(48, 16, 230, 0.534);
+      padding: 20px;
+      border-radius: 6px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body style="
+  margin:0;
+  height:100vh;
+  font-family: Arial, sans-serif;
+  background-image: url('kucing.jpg');
+  background-size: cover;
+  background-position: center;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content:center;
+  align-items:center;
+">
+<div style="background:rgba(10, 85, 182, 0.6); ">
+
+  <a href="index.html" 
+     style="position:fixed; top:15px; right:15px; background:#f44336; color:white; 
+            padding:10px 18px; border-radius:8px; font-size:14px; font-weight:bold; 
+            cursor:pointer; text-decoration:none;">
+    ✖ Keluar
+  </a>
+
+  
+  <audio autoplay loop>
+    <source src="shound.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="result"></div>
+
+  
+  <div style="display:flex; gap:40px; padding:20px;">
+
+    <div style="
+      width:260px; background:rgba(255, 255, 255, 0.486);
+      border:2px solid #333; border-radius:12px;
+      padding:20px; text-align:center;
+    ">
+      <h2 style="margin:0;">Player</h2>
+      <p id="playerHP" style="margin:5px 0; font-weight:bold;">100%</p>
+      <div id="playerChoice" style="font-size:120px; margin:16px 0;">
+        <img style="width: 250px; height: 270px;" src="assets/image/tanda_tanya.png" alt="tanda_tanya">
+      </div>
+      <div style="display:flex; justify-content:center; gap:12px;">
+        <img src="assets/image/batu.png" onclick="play('batu')" class="batu">
+        <img src="assets/image/gunting.png" onclick="play('gunting')" class="gunting">
+        <img src="assets/image/kertas.png" onclick="play('kertas')" class="kertas">
+      </div>
+    </div>
+
+    <div style="
+      width:260px; background:rgba(255, 255, 255, 0.486);
+      border:2px solid #333; border-radius:12px;
+      padding:20px; text-align:center;
+    ">
+      <h2 style="margin:0;">Computer</h2>
+      <p id="compHP" style="margin:5px 0; font-weight:bold;">100%</p>
+      <div id="computerChoice" style="font-size:120px; margin:16px 0;">
+        <img style="width: 250px; height: 270px;" src="assets/image/tanda_tanya.png" alt="tanda_tanya">
+      </div>
+      <div style="display:flex; justify-content:center; gap:12px;">
+        <img src="assets/image/batu.png" class="batu">
+        <img src="assets/image/gunting.png" class="gunting">
+        <img src="assets/image/kertas.png" class="kertas">
+      </div>
+    </div>
+  </div>
+</div>
+  <button onclick="restartGame()" 
+          style="display:none; margin-top:20px; background:#FF9800; color:white; 
+                 padding:12px 25px; border:none; border-radius:10px; 
+                 font-size:16px; font-weight:bold; cursor:pointer;" 
+          id="restartBtn">
+    🔄 Restart
+  </button>
+  <script>
+    let playerHP = 100;
+    let compHP = 100;
+
+    function play(playerMove) {
+      const moves = ["batu", "gunting", "kertas"];
+      const compMove = moves[Math.floor(Math.random() * 3)];
+
+      document.getElementById("playerChoice").innerHTML = Image(playerMove);
+      document.getElementById("computerChoice").innerHTML = Image(compMove);
+
+      let hasil = "";
+
+      // cek siapa menang
+      if (playerMove === compMove) {
+        hasil = "Seri!";
+      } else if (
+        (playerMove === "batu" && compMove === "gunting") ||
+        (playerMove === "gunting" && compMove === "kertas") ||
+        (playerMove === "kertas" && compMove === "batu")
+      ) {
+        compHP -= 20;
+        hasil = "Player Menang!";
+      } else {
+        playerHP -= 20;
+        hasil = "Computer Menang!";
+      }
+
+      // update darah
+      if (playerHP < 0) playerHP = 0;
+      if (compHP < 0) compHP = 0;
+      document.getElementById("playerHP").innerText = playerHP + "%";
+      document.getElementById("compHP").innerText = compHP + "%";
+
+      // tampilkan hasil
+      document.getElementById("result").innerText = hasil;
+
+      // cek game over
+      if (playerHP === 0) {
+        document.getElementById("result").innerText = "Game Over! Computer Menang 🖥️";
+        document.getElementById("restartBtn").style.display = "inline-block"; // tampilkan restart
+      } else if (compHP === 0) {
+        document.getElementById("result").innerText = "Selamat! Player Menang 🎉";
+        document.getElementById("restartBtn").style.display = "inline-block"; // tampilkan restart
+      }
+    }
+
+    function Image(move) {
+      if (move === 'batu') {
+        return "<img src='assets/image/batu.png' class='batu'/>";
+      } else if (move === "kertas") {
+        return "<img src='assets/image/kertas.png' class='kertas'/>";
+      } else if (move === "gunting") {
+        return "<img src='assets/image/gunting.png' class='gunting'/>";
+      } else {
+        return "<img style='width: 250px; height: 270px;' src='assets/image/tanda_tanya.png' alt='tanda_tanya'>";
+      }
+    }
+
+    function restartGame() {
+      location.reload();
+    }
+  </script>
+
+</body>
+</html>
